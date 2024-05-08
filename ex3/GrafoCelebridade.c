@@ -70,23 +70,31 @@ void destruir_grafo(Grafo *p) {
     free(p);
 }
 
-int e_celebridade(Grafo *g, int pessoa) {
-    int i;
+int e_celebridade(Grafo *g, int pessoa, int seguidores_minimos) {
+    int i, seguidores = 0;
+    
     for (i = 0; i < g->n; i++) {
         if (i == pessoa)
             continue; // Ignora a própria pessoa
 
-        // Se a pessoa segue alguém ou alguém não a segue, ela não é celebridade
-        if (tem_aresta(g, pessoa, i) || !tem_aresta(g, i, pessoa))
+        // Verifica se a pessoa segue alguém
+        if (tem_aresta(g, pessoa, i))
             return 0;
+
+        // Conta o número de seguidores
+        if (tem_aresta(g, i, pessoa))
+            seguidores++;
     }
-    return 1; // Se a pessoa não segue ninguém e todos a seguem, ela é celebridade
+
+    // Verifica se o número de seguidores é maior ou igual ao mínimo necessário
+    return seguidores >= seguidores_minimos;
 }
+
 
 void encontrar_celebridades(Grafo *g, int seguidores_minimos) {
     int i;
     for (i = 0; i < g->n; i++) {
-        if (e_celebridade(g, i)) {
+        if (e_celebridade(g, i, seguidores_minimos)) {
             printf("Pessoa %d é uma celebridade.\n", i);
         }
     }
